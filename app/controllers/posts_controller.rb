@@ -5,9 +5,9 @@ class PostsController < ApplicationController
     render json: @post
   end
 
-  # def create
-  #   @post = Post.create(name: params[:name])
-  #   render json: @post
-  # end
+  def create
+    @post = Post.create(title: params[:title])
+    render json: @post
+  end
 
 end

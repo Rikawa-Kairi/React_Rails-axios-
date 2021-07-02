@@ -4,8 +4,10 @@ import axios from 'axios';
 function Main () {
   const [posts, setPosts] = useState([])
 
+  // this.state = {posts: []}この状態
+
   useEffect(() => {
-    axios.get(['http://localhost:3001/posts'])
+    axios.get('http://localhost:3001/posts')
     .then(res => {
           const posts = res.data;
           console.log("posts::",posts);
