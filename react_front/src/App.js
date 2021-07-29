@@ -1,15 +1,19 @@
-import React from 'react';
-import Header from './Components/index_header';
-import Main from './Components/index_main'
-import New from './Components/new'
+import React from "react";
 
-const App = () => {
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+import Main from './Components/index_main'
+import Post from './Components/new_post'
+
+function App(){
   return(
     <div>
-      <Header></Header>
-      <Main></Main>
-      <New></New>
-
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Main}/>
+          <Route path="/new_post" component={Post}/>
+        </Switch>
+      </Router>
     </div>
   )
 }

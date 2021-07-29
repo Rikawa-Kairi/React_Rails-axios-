@@ -1,30 +1,32 @@
 import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 
-function Main () {
-  const [posts, setPosts] = useState([])
+import Header from './index_header'
+import New from './new'
 
-  // this.state = {posts: []}この状態
+
+const Main = () => {
+  const [posts,setPosts] = useState([]);
+  
 
   useEffect(() => {
-    axios.get('http://localhost:3001/posts')
-    .then(res => {
-          const posts = res.data;
-          console.log("posts::",posts);
-          setPosts(posts);
-        })
-    }, [])
-    
-return(
+    axios.get("http://localhost:3001/posts").then((res) =>{
+      const posts = res.data;
+      console.log("posts_get::",posts);
+      setPosts(posts);
+    });
+  },[]);
 
-  <div>
-    <ul>
-    {
-      posts.map(post => <li key={post.id}> {post.title}</li>)
-    }
-    </ul>
-        
-  </div> 
-)
+  return(
+    <div>
+      <Header></Header>
+      <New posts={posts} setPosts={setPosts}></New> {/* propsを渡すためにprops名を命名 postsの中身は投稿されたデータ*/}
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}> {post.title} ::{post.content} ::{post.price} </li>
+    ))}
+  </ul>
+    </div>
+  )
 }
     export default Main;
