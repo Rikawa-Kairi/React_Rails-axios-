@@ -1,42 +1,58 @@
-import React, {  useState } from "react";
+import React, {  useState,useCallback } from "react";
 import axios from "axios";
-
-import Image from "./img";
 
 function New(props) {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("")
   const [price, setPrice] = useState("")
+  const [image, setImage] = useState("")
 
-  const post = {
-    title,
-    content,
-    price,
+  const selectImage = useCallback((e) => {
+    let files = e.target.files
+    let reader = new FileReader();
+    
+    reader.readAsDataURL(files[0]);
+    reader.onload = () => {
+      setImage(reader.result);
+      console.log("読み込み成功",reader);
+    }
+  }, [])
+
+  const createFormData = () => {
+    const formData = new FormData()
+      formData.append('post[title]', title)//キーと値
+      formData.append('post[content]', content)
+      formData.append('post[price]', price)
+      formData.append('post[image]', image) //imageを追加
+      console.log('formDate',formData);
+    return formData
+}
+
+const sendFormData = async () => {      
+  const url = 'http://localhost:3001/posts'
+  const data = await createFormData()   //formdataが作成されるのを待つ
+  const config = {
+    headers: {
+      'content-type': 'multipart/form-data'// 画像ファイルを取り扱うのでform-dataで送信
+    }
+  }
+  axios.post(url, data, config)
+  .then(response => {
+    console.log("image_post_res",response) 
+  }).catch(error => {
+    console.log(error)
+  })
+    // const posts = Array.from(props.posts);
+    // const post = response.data;
+    // posts.push(post);
+    // props.setPosts(posts);
+    // console.log("Array",posts);
+   
   };
-  console.log("title_post",post);
-  // titleの初期値は""なので変数経由じゃないと
-
-
-  const handleSubmit = (evt) => {
-      evt.preventDefault();
-      alert(`投稿 ${title,content,price}`)
-      axios.post('http://localhost:3001/posts',post)
-      .then(res => {
-        const posts = Array.from(props.posts);
-        // getしたデータを代入
-        console.log("Array",posts);
-
-        const post = res.data;
-        posts.push(post);
-        // 投稿したデータをgetしてきたデータにpost
-        props.setPosts(posts);
-            });
-          };
 
   return (
   <div>
-    <form onSubmit={handleSubmit}>
       {/* 送信ボタンクリック時にフォーム内容をhandleSubmitに飛ばして */}
       <label>
         タイトル:
@@ -65,13 +81,20 @@ function New(props) {
           onChange={e => setPrice(e.target.value)}
         />
       </label>
-      <input type="submit" value="Submit" />
-    </form>
-    <Image></Image>
+
+      <label>
+        <input
+          type="file" 
+          onChange={(e) => selectImage(e)}/>
+      </label>
+      <img src={image} width={200}/>
+
+      <button onClick={sendFormData}>送信</button>
   </div>
     
     
   );
 }
 export default New;
+
 
